@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { useFrame } from "@react-three/fiber"
-import { Text, Box, Sphere, Cylinder } from "@react-three/drei"
+import { Text, Sphere, Cylinder, Cone } from "@react-three/drei"
 import type * as THREE from "three"
 
 interface SpaceshipProps {
@@ -20,10 +20,10 @@ function Spaceship({ position, rotation, scale, color, data, onSelect }: Spacesh
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Gentle floating animation
+      // Flotación suave
       meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2
 
-      // Slow rotation when hovered
+      // Rotación cuando está en hover
       if (hovered) {
         meshRef.current.rotation.y += 0.01
       }
@@ -39,60 +39,61 @@ function Spaceship({ position, rotation, scale, color, data, onSelect }: Spacesh
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       onClick={() => onSelect(data)}
-      style={{ cursor: "pointer" }}
     >
-      {/* Main body */}
-      <Box args={[2, 0.5, 4]} position={[0, 0, 0]}>
+      {/* Cuerpo del cohete */}
+      <Cylinder args={[0.6, 0.6, 4, 16]} position={[0, 0, 0]}>
         <meshStandardMaterial
           color={hovered ? "#10b981" : color}
-          emissive={hovered ? "#059669" : "#000000"}
+          emissive={hovered ? "#059669" : "#000"}
           emissiveIntensity={hovered ? 0.3 : 0}
-          metalness={0.8}
-          roughness={0.2}
-        />
-      </Box>
-
-      {/* Wings */}
-      <Box args={[4, 0.2, 1]} position={[0, 0, -1]}>
-        <meshStandardMaterial
-          color={hovered ? "#10b981" : color}
-          emissive={hovered ? "#059669" : "#000000"}
-          emissiveIntensity={hovered ? 0.2 : 0}
           metalness={0.7}
           roughness={0.3}
         />
-      </Box>
+      </Cylinder>
 
-      {/* Cockpit */}
-      <Sphere args={[0.4]} position={[0, 0.3, 1]}>
+      {/* Punta */}
+      <Cone args={[0.6, 1, 16]} position={[0, 2.5, 0]}>
+        <meshStandardMaterial color={hovered ? "#34d399" : "#ffffff"} metalness={0.6} roughness={0.3} />
+      </Cone>
+
+      {/* Cabina (esfera de cristal) */}
+      <Sphere args={[0.5, 16, 16]} position={[0, 1.2, 0.7]}>
         <meshStandardMaterial
           color="#87ceeb"
           transparent
           opacity={0.7}
-          emissive={hovered ? "#10b981" : "#000000"}
+          emissive={hovered ? "#10b981" : "#000"}
           emissiveIntensity={hovered ? 0.1 : 0}
         />
       </Sphere>
 
-      {/* Engines */}
-      <Cylinder args={[0.2, 0.3, 1]} position={[-1, -0.2, -2]} rotation={[Math.PI / 2, 0, 0]}>
+      {/* Aletas laterales */}
+      <Cone args={[0.3, 1, 3]} position={[-0.9, -1.5, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <meshStandardMaterial color={hovered ? "#10b981" : "#444"} />
+      </Cone>
+      <Cone args={[0.3, 1, 3]} position={[0.9, -1.5, 0]} rotation={[0, 0, -Math.PI / 2]}>
+        <meshStandardMaterial color={hovered ? "#10b981" : "#444"} />
+      </Cone>
+
+      {/* Motores */}
+      <Cylinder args={[0.25, 0.25, 1]} position={[-0.5, -2.5, 0]}>
         <meshStandardMaterial
-          color={hovered ? "#ff4444" : "#666666"}
-          emissive={hovered ? "#ff0000" : "#000000"}
-          emissiveIntensity={hovered ? 0.5 : 0}
+          color={hovered ? "#ff4444" : "#666"}
+          emissive={hovered ? "#ff0000" : "#000"}
+          emissiveIntensity={hovered ? 0.6 : 0}
         />
       </Cylinder>
-      <Cylinder args={[0.2, 0.3, 1]} position={[1, -0.2, -2]} rotation={[Math.PI / 2, 0, 0]}>
+      <Cylinder args={[0.25, 0.25, 1]} position={[0.5, -2.5, 0]}>
         <meshStandardMaterial
-          color={hovered ? "#ff4444" : "#666666"}
-          emissive={hovered ? "#ff0000" : "#000000"}
-          emissiveIntensity={hovered ? 0.5 : 0}
+          color={hovered ? "#ff4444" : "#666"}
+          emissive={hovered ? "#ff0000" : "#000"}
+          emissiveIntensity={hovered ? 0.6 : 0}
         />
       </Cylinder>
 
-      {/* Hover label */}
+      {/* Texto flotante */}
       {hovered && (
-        <Text position={[0, 2, 0]} fontSize={0.5} color="#10b981" anchorX="center" anchorY="middle">
+        <Text position={[0, 3.5, 0]} fontSize={0.5} color="#10b981" anchorX="center" anchorY="middle">
           {data.name}
         </Text>
       )}
